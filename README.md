@@ -26,7 +26,7 @@ A production-ready WhatsApp chatbot for SACCOs (Savings and Credit Cooperative O
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/sacco-whatsapp-bot.git
+git clone https://github.com/Muitamax/sacco-whatsapp-bot.git
 cd sacco-whatsapp-bot
 ```
 
