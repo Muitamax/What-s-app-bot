@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # Main application service
+  app:
+    build: .
+    container_name: sacco-bot
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongo:27017/sacco-bot
+      - JWT_SECRET=your_jwt_secret_key
+      - JWT_EXPIRES_IN=30d
+      - WHATSAPP_API_KEY=your_whatsapp_api_key
+      - WHATSAPP_WEBHOOK_SECRET=your_webhook_secret
+      - WHATSAPP_PHONE_NUMBER_ID=your_whatsapp_phone_number_id
+      - MPESA_CONSUMER_KEY=your_mpesa_consumer_key
+      - MPESA_CONSUMER_SECRET=your_mpesa_consumer_secret
+      - MPESA_PASSKEY=your_mpesa_passkey
+      - MPESA_SHORTCODE=your_mpesa_shortcode
+      - MPESA_INITIATOR_NAME=your_initiator_name
+      - MPESA_SECURITY_CREDENTIAL=your_security_credential
+      - MPESA_ENVIRONMENT=sandbox
+      - APP_URL=http://localhost:3000
+    depends_on:
+      - mongo
+    volumes:
+      - ./logs:/usr/src/app/logs
+    networks:
+      - sacco-network
+
+  # MongoDB service
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=sacco-bot
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    ports:
+      - "27017:27017"
+    networks:
+      - sacco-network
+
+  # MongoDB web interface (optional)
+  mongo-express:
+    image: mongo-express:1.0
+    container_name: mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin123
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin123
+    depends_on:
+      - mongo
+    networks:
+      - sacco-network
+
+networks:
+  sacco-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  mongodb_config:
